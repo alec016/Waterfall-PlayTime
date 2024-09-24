@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public class DataConverter {
-  private final String file = "plugins" + File.separator + "WaterfallPlayTime" + File.separator + "playtimes.yml";
+  private final String file = "plugins" + File.separator + "WaterfallPlaytime" + File.separator + "playtimes.yml";
   private final Main main;
   private final ConfigHandler configHandler;
   private long start;
@@ -73,7 +73,7 @@ public class DataConverter {
 
       // Write the processed content back to the same file
       Files.write(path, content.toString().getBytes());
-      main.getLogger().log(Level.INFO, "Your data file has been converted, took: {} ms", System.currentTimeMillis() - start);
+      main.getLogger().log(Level.INFO, "Your data file has been converted, took: {0} ms", System.currentTimeMillis() - start);
 
     } catch (IOException e) {
       throw new RuntimeException(e);

@@ -51,13 +51,8 @@ public class Main extends Plugin {
   public final HashMap<String, Long> playtimeCache = new HashMap<>();
 
 
-  private final Metrics metrics;
-
   public Main() {
-    int pluginID = 22432;
-    metrics = new Metrics(this, pluginID);
     InitInstance();
-
     configHandler.initConfig(getDataFolder().toPath());
     configHandler.makeNonChanging();
     configHandler.makeConfigCache();
@@ -76,10 +71,12 @@ public class Main extends Plugin {
     if(configHandler.isUSE_CACHE()) {
       cacheHandler.buildCache();
       getProxy().getScheduler()
-        .schedule(this, () -> cacheHandler.updateCache(), configHandler.getCACHE_UPDATE_INTERVAL(), TimeUnit.MILLISECONDS);
+        .schedule(this, () -> cacheHandler.updateCache(), 0L, configHandler.getCACHE_UPDATE_INTERVAL(), TimeUnit.MILLISECONDS);
     }
 
     if(configHandler.isBSTATS()) {
+      int pluginID = 23455;
+      Metrics metrics = new Metrics(this, pluginID);
 
       metrics.addCustomChart(new SimplePie("uses_cache", () -> configHandler.isUSE_CACHE() ? "true" : "false"));
       metrics.addCustomChart(new SimplePie("perms_usage", () -> configHandler.getPermsUsageCount()));
@@ -104,7 +101,7 @@ public class Main extends Plugin {
             }
           });
         }
-      }, 1L, TimeUnit.SECONDS);
+      }, 0L, 1L, TimeUnit.SECONDS);
 
     getProxy().getPluginManager().registerCommand(this, playtimeCommand);
     getProxy().getPluginManager().registerCommand(this, playtimeTopCommand);

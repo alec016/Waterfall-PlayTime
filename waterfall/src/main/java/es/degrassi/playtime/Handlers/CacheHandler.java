@@ -2,7 +2,6 @@ package es.degrassi.playtime.Handlers;
 
 import es.degrassi.playtime.Main;
 import java.util.logging.Level;
-import lombok.Getter;
 
 import java.util.*;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -10,13 +9,17 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 public class CacheHandler {
   private final Main main;
   private final ConfigHandler configHandler;
-  @Getter
   private long cacheGenTime;
 
   public CacheHandler(Main main, ConfigHandler configHandler) {
     this.main = main;
     this.configHandler = configHandler;
   }
+
+  public long getCacheGenTime() {
+    return cacheGenTime;
+  }
+
   public void buildCache() {
     Iterator<Object> iterator = configHandler.getConfigIterator("Player-Data", true);
     if(iterator == null)
@@ -39,7 +42,8 @@ public class CacheHandler {
       main.playtimeCache.put(Entry.getKey(), Entry.getValue());
       TempCache.remove(Entry.getKey());
     }
-    main.getLogger().log(Level.INFO, "The cache has been built, took: {} ms", cacheGenTime = (System.currentTimeMillis() - start) + configHandler.getGenTime());
+    cacheGenTime = (System.currentTimeMillis() - start) + configHandler.getGenTime();
+    main.getLogger().log(Level.INFO, "The cache has been built, took: {0} ms", cacheGenTime);
   }
 
   public HashMap<String, Long> generateTempCache() {

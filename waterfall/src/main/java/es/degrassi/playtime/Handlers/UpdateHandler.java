@@ -1,6 +1,5 @@
 package es.degrassi.playtime.Handlers;
 
-import es.degrassi.BuildConstants;
 import es.degrassi.playtime.Main;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -20,13 +19,13 @@ public class UpdateHandler {
   }
 
   public void checkForUpdates() {
-    String currentVersion = BuildConstants.VERSION;
-    String latestVersion = getLatestVersion();
-
-    if (latestVersion != null && !currentVersion.equals(latestVersion))
-      main.getLogger().log(Level.WARNING, "New version available: {}.", latestVersion);
-    else
-      main.getLogger().info("You are using the latest version.");
+//    String currentVersion = main.getDescription().getVersion();
+//    String latestVersion = getLatestVersion();
+//
+//    if (latestVersion != null && !currentVersion.equals(latestVersion))
+//      main.getLogger().log(Level.WARNING, "New version available: {}.", latestVersion);
+//    else
+//      main.getLogger().info("You are using the latest version.");
   }
 
   private String getLatestVersion() {
@@ -44,7 +43,7 @@ public class UpdateHandler {
         return jsonObject.get("name").getAsString().trim();
       }
     } catch (Exception e) {
-      main.getLogger().log(Level.SEVERE, "Failed to check for updates: {}", e.getMessage());
+      main.getLogger().log(Level.SEVERE, "Failed to check for updates: {0}", e.getMessage());
       return null;
     }
   }

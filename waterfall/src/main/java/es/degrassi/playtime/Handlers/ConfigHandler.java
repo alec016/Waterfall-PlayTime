@@ -1,8 +1,6 @@
 package es.degrassi.playtime.Handlers;
 
 import es.degrassi.playtime.Main;
-//import com.velocitypowered.api.plugin.PluginContainer;
-//import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
@@ -10,24 +8,22 @@ import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Level;
-import lombok.AccessLevel;
-import lombok.Getter;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 
-@Getter
 public class ConfigHandler {
-  @Getter(AccessLevel.NONE)
   private final Main main;
-  @Getter(AccessLevel.NONE)
   private YamlDocument dataConfig;
-  @Getter(AccessLevel.NONE)
   private YamlDocument config;
 
   public ConfigHandler(Main main) {
@@ -49,6 +45,62 @@ public class ConfigHandler {
   private String TOP_PLAYTIME_LIST;
   private BaseComponent TOP_PLAYTIME_FOOTER;
 
+  public BaseComponent getNO_CONSOLE_USE() {
+    return NO_CONSOLE_USE;
+  }
+
+  public String getYOUR_PLAYTIME() {
+    return YOUR_PLAYTIME;
+  }
+
+  public BaseComponent getNO_PLAYER() {
+    return NO_PLAYER;
+  }
+
+  public String getOTHER_PLAYTIME() {
+    return OTHER_PLAYTIME;
+  }
+
+  public BaseComponent getNO_PERMISSION() {
+    return NO_PERMISSION;
+  }
+
+  public BaseComponent getCONFIG_RELOAD() {
+    return CONFIG_RELOAD;
+  }
+
+  public String getPTRESET() {
+    return PTRESET;
+  }
+
+  public BaseComponent getPTRESET_HELP() {
+    return PTRESET_HELP;
+  }
+
+  public BaseComponent getPTRESETALL() {
+    return PTRESETALL;
+  }
+
+  public BaseComponent getPTRESETALL_CONFIRM() {
+    return PTRESETALL_CONFIRM;
+  }
+
+  public BaseComponent getINVALID_ARGS() {
+    return INVALID_ARGS;
+  }
+
+  public BaseComponent getTOP_PLAYTIME_HEADER() {
+    return TOP_PLAYTIME_HEADER;
+  }
+
+  public String getTOP_PLAYTIME_LIST() {
+    return TOP_PLAYTIME_LIST;
+  }
+
+  public BaseComponent getTOP_PLAYTIME_FOOTER() {
+    return TOP_PLAYTIME_FOOTER;
+  }
+
   private int TOPLIST_LIMIT;
   private boolean BSTATS;
   private boolean CHECK_FOR_UPDATES;
@@ -60,6 +112,50 @@ public class ConfigHandler {
   private boolean isDataFileUpToDate;
   private long genTime;
   private long start;
+
+  public int getTOPLIST_LIMIT() {
+    return TOPLIST_LIMIT;
+  }
+
+  public boolean isBSTATS() {
+    return BSTATS;
+  }
+
+  public boolean isCHECK_FOR_UPDATES() {
+    return CHECK_FOR_UPDATES;
+  }
+
+  public boolean isUSE_CACHE() {
+    return USE_CACHE;
+  }
+
+  public long getCACHE_UPDATE_INTERVAL() {
+    return CACHE_UPDATE_INTERVAL;
+  }
+
+  public boolean isVIEW_OWN_TIME() {
+    return VIEW_OWN_TIME;
+  }
+
+  public boolean isVIEW_OTHERS_TIME() {
+    return VIEW_OTHERS_TIME;
+  }
+
+  public boolean isVIEW_TOPLIST() {
+    return VIEW_TOPLIST;
+  }
+
+  public boolean isDataFileUpToDate() {
+    return isDataFileUpToDate;
+  }
+
+  public long getGenTime() {
+    return genTime;
+  }
+
+  public long getStart() {
+    return start;
+  }
 
   public HashMap<Long, String> rewardsH = new HashMap<>();
 
@@ -90,7 +186,7 @@ public class ConfigHandler {
       config.save();
 
     } catch (IOException e) {
-      main.getLogger().log(Level.SEVERE, "Config initialize error. ", e);
+      main.getLogger().log(Level.SEVERE, "Config initialize error. {0}", e);
       main.getExecutorService().shutdown();
     }
   }

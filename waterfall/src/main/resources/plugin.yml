@@ -1,4 +1,4 @@
-name: WaterfallPlayTime
+name: WaterfallPlaytime
 main: es.degrassi.playtime.Main
 version: ${version}
 author: alec016
