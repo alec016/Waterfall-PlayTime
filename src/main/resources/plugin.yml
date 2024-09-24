@@ -1,0 +1,5 @@
+name: WaterfallPlayTime
+main: es.degrassi.playtime.Main
+version: ${version}
+author: alec016
+description: Playtime logger for waterfall

@@ -1,4 +1,4 @@
-#Velocity playtime logger.
+#Waterfall playtime logger.
 file-version: 7
 isDataFileUpToDate: false
 Messages:
@@ -33,5 +33,5 @@ Data:
 
 #You can define your rewards under 'Rewards:' with the following format: 'playtime in milliseconds': command
 #(1sec = 1000ms, you need to have one space at the start of very line)
-# '15000': lpv user %player% parent set group #Example command.
+# '15000': lpb user %player% parent set group #Example command.
 Rewards:

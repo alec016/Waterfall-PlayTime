@@ -1,4 +1,4 @@
-package _1ms;
+package es.degrassi;
 
 // The constants are replaced before compilation
 public class BuildConstants {
