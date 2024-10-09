@@ -1,6 +1,5 @@
-package es.degrassi.playtime.Handlers;
+package es.degrassi.playtime.handler;
 
-import es.degrassi.playtime.Main;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
@@ -8,27 +7,24 @@ import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.logging.Level;
-
+import es.degrassi.common.CommonConfigHandler;
+import es.degrassi.playtime.Main;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.logging.Level;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 
-public class ConfigHandler {
+@SuppressWarnings("unused")
+public class ConfigHandler implements CommonConfigHandler {
   private final Main main;
-  private YamlDocument dataConfig;
   private YamlDocument config;
-
-  public ConfigHandler(Main main) {
-    this.main = main;
-  }
 
   private BaseComponent NO_CONSOLE_USE;
   private String YOUR_PLAYTIME;
@@ -41,9 +37,35 @@ public class ConfigHandler {
   private BaseComponent PTRESETALL;
   private BaseComponent PTRESETALL_CONFIRM;
   private BaseComponent INVALID_ARGS;
-  private BaseComponent TOP_PLAYTIME_HEADER;
+  private String TOP_PLAYTIME_HEADER;
   private String TOP_PLAYTIME_LIST;
   private BaseComponent TOP_PLAYTIME_FOOTER;
+
+  private int TOPLIST_LIMIT;
+  private boolean BSTATS;
+  private boolean CHECK_FOR_UPDATES;
+  private boolean USE_CACHE;
+  private long CACHE_UPDATE_INTERVAL;
+  private boolean VIEW_OWN_TIME;
+  private boolean VIEW_OTHERS_TIME;
+  private boolean VIEW_TOPLIST;
+  private boolean isDataFileUpToDate;
+  private long genTime;
+  private long start;
+
+  private String dbUser;
+  private String dbPassword;
+  private String dbHost;
+  private String dbName;
+  private int dbPort;
+
+//  public HashMap<Long, String> rewardsH = new HashMap<>();
+
+  public HashMap<String, HashMap<Long, String>> rewardsH = new HashMap<>();
+
+  public ConfigHandler(Main main) {
+    this.main = main;
+  }
 
   public BaseComponent getNO_CONSOLE_USE() {
     return NO_CONSOLE_USE;
@@ -89,7 +111,7 @@ public class ConfigHandler {
     return INVALID_ARGS;
   }
 
-  public BaseComponent getTOP_PLAYTIME_HEADER() {
+  public String getTOP_PLAYTIME_HEADER() {
     return TOP_PLAYTIME_HEADER;
   }
 
@@ -101,17 +123,25 @@ public class ConfigHandler {
     return TOP_PLAYTIME_FOOTER;
   }
 
-  private int TOPLIST_LIMIT;
-  private boolean BSTATS;
-  private boolean CHECK_FOR_UPDATES;
-  private boolean USE_CACHE;
-  private long CACHE_UPDATE_INTERVAL;
-  private boolean VIEW_OWN_TIME;
-  private boolean VIEW_OTHERS_TIME;
-  private boolean VIEW_TOPLIST;
-  private boolean isDataFileUpToDate;
-  private long genTime;
-  private long start;
+  public String getDBUser() {
+    return dbUser;
+  }
+
+  public String getDBPassword() {
+    return dbPassword;
+  }
+
+  public String getDBHost() {
+    return dbHost;
+  }
+
+  public String getDBName() {
+    return dbName;
+  }
+
+  public int getDBPort() {
+    return dbPort;
+  }
 
   public int getTOPLIST_LIMIT() {
     return TOPLIST_LIMIT;
@@ -157,22 +187,8 @@ public class ConfigHandler {
     return start;
   }
 
-  public HashMap<Long, String> rewardsH = new HashMap<>();
-
   public void initConfig(Path dataDirectory) {
-    try{
-      dataConfig = YamlDocument.create(new File(dataDirectory.toFile(), "playtimes.yml"),
-        Objects.requireNonNull(getClass().getResourceAsStream("/playtimes.yml")),
-        GeneralSettings.DEFAULT,
-        LoaderSettings.builder().setAutoUpdate(true).build(),
-        DumperSettings.DEFAULT,
-        UpdaterSettings.builder().setVersioning(new BasicVersioning("file-version"))
-          .setOptionSorting(UpdaterSettings.OptionSorting.SORT_BY_DEFAULTS).build()
-      );
-
-      dataConfig.update();
-      dataConfig.save();
-
+    try {
       config = YamlDocument.create(new File(dataDirectory.toFile(), "config.yml"),
         Objects.requireNonNull(getClass().getResourceAsStream("/config.yml")),
         GeneralSettings.DEFAULT,
@@ -181,13 +197,11 @@ public class ConfigHandler {
         UpdaterSettings.builder().setVersioning(new BasicVersioning("file-version"))
           .setOptionSorting(UpdaterSettings.OptionSorting.SORT_BY_DEFAULTS).build()
       );
-
       config.update();
       config.save();
-
     } catch (IOException e) {
       main.getLogger().log(Level.SEVERE, "Config initialize error. {0}", e);
-      main.getExecutorService().shutdown();
+      main.onDisable();
     }
   }
 
@@ -203,7 +217,7 @@ public class ConfigHandler {
     PTRESETALL = initComp("Messages.PTRESETALL");
     PTRESETALL_CONFIRM = initComp("Messages.PTRESETALL_CONFIRM");
     INVALID_ARGS = initComp("Messages.INVALID_ARGS");
-    TOP_PLAYTIME_HEADER = initComp("Messages.TOP_PLAYTIME_HEADER");
+    TOP_PLAYTIME_HEADER = config.getString("Messages.TOP_PLAYTIME_HEADER");
     TOP_PLAYTIME_LIST = config.getString("Messages.TOP_PLAYTIME_LIST");
     TOP_PLAYTIME_FOOTER = initComp("Messages.TOP_PLAYTIME_FOOTER");
 
@@ -212,14 +226,27 @@ public class ConfigHandler {
     VIEW_TOPLIST = config.getBoolean("Data.PERMISSIONS.VIEW_TOPLIST");
     if(!USE_CACHE)
       TOPLIST_LIMIT = config.getInt("Data.TOPLIST_LIMIT");
-    //Rewards.
 
-    getConfigIterator("Rewards", false).forEachRemaining(key -> rewardsH.put(Long.valueOf((String) key), config.getString("Rewards." + key)));
+    //Rewards.
+    getConfigIterator("Rewards").forEachRemaining(key -> {
+      HashMap<Long, String> rewardPerServer = rewardsH.computeIfAbsent(((String) key).toLowerCase(Locale.ROOT), (k) -> new HashMap<>());
+      getConfigIterator("Rewards." + key).forEachRemaining(key2 -> {
+        rewardPerServer.put(Long.valueOf((String) key2), config.getString("Rewards." + key + "." + key2));
+      });
+    });
+//    getConfigIterator("Rewards").forEachRemaining(key -> rewardsH.put(Long.valueOf((String) key), config.getString("Rewards." + key)));
     genTime = System.currentTimeMillis() - start;
   }
 
   public void makeNonChanging() {
     start = System.currentTimeMillis();
+    // Database
+    dbUser = config.getString("Database.username");
+    dbPassword = config.getString("Database.password");
+    dbName = config.getString("Database.dbName");
+    dbHost = config.getString("Database.host");
+    dbPort = config.getInt("Database.port");
+
     USE_CACHE = config.getBoolean("Data.CACHING.USE_CACHE");
     CACHE_UPDATE_INTERVAL = config.getLong("Data.CACHING.CACHE_UPDATE_INTERVAL");
     BSTATS = config.getBoolean("Data.BSTATS");
@@ -229,15 +256,15 @@ public class ConfigHandler {
       TOPLIST_LIMIT = config.getInt("Data.TOPLIST_LIMIT");
   }
 
-  public Iterator<Object> getConfigIterator(String path, boolean isData) {
-    final Section section = isData ? dataConfig.getSection(path) : config.getSection(path);
+  public Iterator<?> getConfigIterator(String path) {
+    final Section section = config.getSection(path);
     return section != null ? section.getKeys().iterator() : Collections.emptyIterator();
   }
 
   public String getPermsUsageCount() {
     int i = 0;
     final String basePath = "Data.PERMISSIONS";
-    Iterator<Object> iterator = getConfigIterator(basePath, false);
+    Iterator<?> iterator = getConfigIterator(basePath);
     while (iterator.hasNext()) {
       String path = (String) iterator.next();
       if(config.getBoolean(basePath + "." + path))
@@ -247,39 +274,13 @@ public class ConfigHandler {
     return String.valueOf(i);
   }
 
-  public long getPtFromConfig(String name) {
-    return dataConfig.getLong("Player-Data." + name + ".playtime");
-  }
-
-  public Optional<Long> getPtOptionalFromConfig(String name) {
-    return dataConfig.getOptionalLong("Player-Data." + name + ".playtime");
-  }
-
-  public void savePlaytime(String name, long time) {
-    dataConfig.set("Player-Data." + name + ".playtime", time);
-    saveData();
-  }
-
-  private void saveData() {
-    try {
-      dataConfig.save();
-    } catch (IOException ex) {
-      throw new RuntimeException(ex);
-    }
-  }
-
-  public void modifyMainConfig(String path, Object value) {
+  public void modifyConfig(String path, Object value) {
     config.set(path, value);
     try {
       config.save();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-  }
-
-  public void nullDataConfig() {
-    dataConfig.set("Player-Data", null);
-    saveData();
   }
 
   public void reloadConfig() {
@@ -299,5 +300,4 @@ public class ConfigHandler {
   public BaseComponent decideNonComponent(String message) {
     return new TextComponent(message);
   }
-
 }

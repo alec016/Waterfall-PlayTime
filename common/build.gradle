@@ -4,4 +4,6 @@ plugins {
 
 dependencies {
   compileOnly project(':common:loader-utils')
+  implementation ("es.degrassi:database:1.1.4")
+  compileOnly("com.google.code.gson:gson:2.11.0")
 }

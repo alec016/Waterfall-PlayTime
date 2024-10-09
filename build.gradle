@@ -12,6 +12,10 @@ subprojects {
     options.encoding = 'UTF-8'
   }
 
+  dependencies {
+    implementation 'org.jetbrains:annotations:25.0.0'
+  }
+
   repositories {
     mavenCentral()
     maven { url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/") }
@@ -28,6 +32,14 @@ subprojects {
     maven {
       name = "papermc-repo"
       url = "https://repo.papermc.io/repository/maven-public/"
+    }
+    maven {
+      name = "alec016"
+      url = "https://maven.pkg.github.com/alec016/database"
+    }
+    maven {
+      name = "PlaceholderAPI"
+      url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
     }
     mavenLocal()
   }

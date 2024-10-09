@@ -1,0 +1,18 @@
+#Waterfall playtime logger placeholderAPI extension.
+file-version: 1
+Messages:
+  LOADING: "loading..."
+  INVALID_ARGS: "§cYou've entered invalid arguments."
+  CONFIG_RELOAD: "§aThe config has been reloaded."
+  NO_PERMISSION: "§cYou don't have permission for this command."
+Data:
+  CHECK_FOR_UPDATES: true
+  BSTATS: true
+  TOPLIST_LIMIT: 10
+
+Database:
+  host: 127.0.0.1
+  port: 3306
+  dbName: ''
+  username: root
+  password: ''

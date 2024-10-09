@@ -1,6 +1,6 @@
-package es.degrassi.playtime.Commands;
+package es.degrassi.playtime.command;
 
-import es.degrassi.playtime.Handlers.ConfigHandler;
+import es.degrassi.playtime.handler.ConfigHandler;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 
@@ -15,7 +15,7 @@ public class ConfigReload extends Command {
 
   @Override
   public void execute(CommandSender sender, String[] args) {
-    if(!sender.hasPermission("vpt.reload")) {
+    if(!sender.hasPermission("wpt.reload")) {
       sender.sendMessage(configHandler.getNO_PERMISSION());
       return;
     }

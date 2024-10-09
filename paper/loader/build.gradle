@@ -1,0 +1,24 @@
+plugins {
+  id "com.github.johnrengelman.shadow" version "8.1.1"
+}
+
+dependencies {
+  compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
+
+  implementation project(':common:loader-utils')
+}
+shadowJar {
+  archiveFileName = "PlaytimeLink-${project.version}.jar"
+
+  from {
+    project(':paper').tasks.shadowJar.archiveFile
+  }
+
+  manifest {
+    attributes(["paperweight-mappings-namespace": "mojang"])
+  }
+}
+
+artifacts {
+  archives shadowJar
+}

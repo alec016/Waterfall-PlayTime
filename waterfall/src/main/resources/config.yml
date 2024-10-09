@@ -13,7 +13,7 @@ Messages:
   PTRESETALL: "§aAll playtimes have been reset."
   PTRESETALL_CONFIRM: "§aIf you are sure to delete every playtime, type /ptresetall confirm"
   INVALID_ARGS: "§cYou've entered invalid arguments."
-  TOP_PLAYTIME_HEADER: "§aPlaytime toplist: "
+  TOP_PLAYTIME_HEADER: "§aPlaytime toplist %server%: "
   TOP_PLAYTIME_LIST: "§a%player%: %hours% hours %minutes% minutes %seconds% secs."
   TOP_PLAYTIME_FOOTER: "§a----------------------"
 
@@ -31,7 +31,20 @@ Data:
     VIEW_OTHERS_TIME: false
     VIEW_TOPLIST: false
 
-#You can define your rewards under 'Rewards:' with the following format: 'playtime in milliseconds': command
+Database:
+  host: 127.0.0.1
+  port: 3306
+  dbName: ''
+  username: root
+  password: ''
+
+#You can define your rewards under 'Rewards:' with the following format:
+#Server name(as you establish in the proxy:
+#'playtime in milliseconds': command
 #(1sec = 1000ms, you need to have one space at the start of very line)
-# '15000': lpb user %player% parent set group #Example command.
+#Example
+#Rewards:
+#  lobby:
+#    '15000': lpb user %player% parent set group #Example command.
+#    '2000000': lpb user %player% parent set group2 #Example command2.
 Rewards:

@@ -1,8 +1,7 @@
-package es.degrassi.playtime.Commands;
+package es.degrassi.playtime.command;
 
-import es.degrassi.playtime.Handlers.ConfigHandler;
 import es.degrassi.playtime.Main;
-
+import es.degrassi.playtime.handler.ConfigHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +15,6 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 public class PlaytimeResetAll extends Command implements TabExecutor {
   private final Main main;
   private final ConfigHandler configHandler;
-
   public PlaytimeResetAll(Main main, ConfigHandler configHandler) {
     super("playtimeresetall", "wpt.ptresetall", "ptra", "ptresetall");
     this.main = main;
@@ -25,7 +23,6 @@ public class PlaytimeResetAll extends Command implements TabExecutor {
 
   @Override
   public void execute(CommandSender sender, String[] args) {
-
     if(!sender.hasPermission("wpt.ptresetall")) {
       sender.sendMessage(configHandler.getNO_PERMISSION());
       return;
@@ -42,16 +39,19 @@ public class PlaytimeResetAll extends Command implements TabExecutor {
           sender.sendMessage(configHandler.getINVALID_ARGS());
           return;
         }
-        configHandler.nullDataConfig();
-        main.playtimeCache.keySet().removeIf(pname -> {
-          Optional<ProxiedPlayer> player = Optional.ofNullable(main.getProxy().getPlayer(pname));
+        main.playTimeCache.removeIf(pname -> {
+          Optional<ProxiedPlayer> player = Optional.ofNullable(main.getProxy().getPlayer(pname.getPlayer()));
           if (player.isPresent()) {
-            main.playtimeCache.replace(pname, 0L);
+            main.playTimeCache.replaceAll(data -> {
+              data.setTime(0);
+              return data;
+            });
             return false;
           } else {
             return true;
           }
         });
+        main.playerDataCacheHandler.save();
         sender.sendMessage(configHandler.getPTRESETALL());
       }
       default -> sender.sendMessage(configHandler.getINVALID_ARGS());

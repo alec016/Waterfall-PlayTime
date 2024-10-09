@@ -1,0 +1,12 @@
+name: PlaytimeLink
+version: '1.0.0'
+main: es.degrassi.playtimeLink.PlaytimeLink
+api-version: '1.21'
+authors: [ alec_016 ]
+description: PlaceholderAPI support for my waterfall playtime plugin.
+dependencies:
+  server:
+    PlaceholderAPI:
+      # Load order is relative to the dependency. So here PlaceholderAPI loads before our plugin.
+      load: BEFORE
+      required: true

@@ -1,8 +1,8 @@
-package es.degrassi.playtime.Commands;
+package es.degrassi.playtime.command;
 
-import es.degrassi.playtime.Handlers.ConfigHandler;
+import es.degrassi.common.data.PlayerData;
+import es.degrassi.playtime.handler.ConfigHandler;
 import es.degrassi.playtime.Main;
-
 import java.util.ArrayList;
 import java.util.List;
 import net.md_5.bungee.api.CommandSender;
@@ -32,20 +32,21 @@ public class PlaytimeCommand extends Command implements TabExecutor {
           sender.sendMessage(configHandler.getNO_CONSOLE_USE());
           return;
         }
-        SendYourPlaytime(player);
+        sendYourPlaytime(player);
 
       }
       case 1 -> {
         if(sender instanceof ProxiedPlayer player1)
           if(player1.getName().equalsIgnoreCase(args[0])) {
-            SendYourPlaytime(player1);
+            sendYourPlaytime(player1);
             return;
           }
         if(configHandler.isVIEW_OTHERS_TIME() && !sender.hasPermission("wpt.getotherstime")) {
           sender.sendMessage(configHandler.getNO_PERMISSION());
           return;
         }
-        long PlayTime = main.playtimeCache.containsKey(args[0]) ? main.GetPlayTime(args[0]) : configHandler.getPtFromConfig(args[0]);
+        ProxiedPlayer player = Main.instance.getProxy().getPlayer(args[0]);
+        long PlayTime = main.getPlayTime(player) != null ? main.getPlayTime(player).getTime() : main.playerDataCacheHandler.get(player.getUniqueId()).getTime();
         if (PlayTime == 0) {
           sender.sendMessage(configHandler.getNO_PLAYER());
         } else {
@@ -61,19 +62,20 @@ public class PlaytimeCommand extends Command implements TabExecutor {
     }
   }
 
-  public void SendYourPlaytime(ProxiedPlayer player) {
+  public void sendYourPlaytime(ProxiedPlayer player) {
     if (configHandler.isVIEW_OWN_TIME() && !player.hasPermission("wpt.getowntime")) {
       player.sendMessage(configHandler.getNO_PERMISSION());
       return;
     }
-    long PlayTime = main.GetPlayTime(player.getName());
+    PlayerData PlayTime = main.getPlayTime(player);
     String messageBegin = configHandler.getYOUR_PLAYTIME()
-      .replace("%hours%", String.valueOf(main.calculatePlayTime(PlayTime, 'h')))
-      .replace("%minutes%", String.valueOf(main.calculatePlayTime(PlayTime, 'm')))
-      .replace("%seconds%", String.valueOf(main.calculatePlayTime(PlayTime, 's')));
+      .replace("%hours%", String.valueOf(main.calculatePlayTime(PlayTime.getTime(), 'h')))
+      .replace("%minutes%", String.valueOf(main.calculatePlayTime(PlayTime.getTime(), 'm')))
+      .replace("%seconds%", String.valueOf(main.calculatePlayTime(PlayTime.getTime(), 's')));
     player.sendMessage(configHandler.decideNonComponent(messageBegin));
   }
 
+  @Override
   public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
     List<String> tabargs = new ArrayList<>();
     if(configHandler.isVIEW_OTHERS_TIME() && !sender.hasPermission("wpt.getotherstime")) {
